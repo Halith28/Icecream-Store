@@ -17,6 +17,7 @@ public class Sample {
 	static ArrayList<String> marList = new ArrayList<String>();
 	static ArrayList<String> icecreamNames = new ArrayList<String>();
 	static ArrayList<Integer> totalSales = new ArrayList<Integer>();
+	static ArrayList<Integer> monthlyTotalSalesCount = new ArrayList<Integer>();
 	static List<Integer> totalSalesPerMonth = new ArrayList<Integer>();
 	static List<Integer> TotalRevenuePerIcecreamPerMonth = new ArrayList<Integer>();
 	static ArrayList<Integer> soldCount = new ArrayList<Integer>();
@@ -44,7 +45,6 @@ public class Sample {
 
 		for (int i = 1, len = list.size(); i < len; i++) {
 			String line = list.get(i);
-
 			String[] splitted = line.split("[,]");
 			int totalQuantity = Integer.parseInt(splitted[3]);
 			String IcecreamList = splitted[1];
@@ -109,21 +109,16 @@ public class Sample {
 	
 
 	public static void getMonthTotals(ArrayList<String> filteredList, LocalDate start) {
-		ArrayList<String> monthlyTotalSales = new ArrayList<String>();
-		ArrayList<String> monthlyTotalSalesCount = new ArrayList<String>();
-		for(int monthSales=0;monthSales<3;monthSales++) {
 		
+		for(int monthSales=0;monthSales<3;monthSales++) {
 		if (start.equals(LocalDate.parse(monthEndDates[monthSales]))) {
-			monthlyTotalSales.addAll(filteredList);
-			for (int i = 0, length = monthlyTotalSales.size(); i < length; i++) {
-				String line = monthlyTotalSales.get(i);
-
+			for (int i = 0, length = filteredList.size(); i < length; i++) {
+				String line = filteredList.get(i);
 				String[] splitted = line.split("[,]");
-				String totalQuantity = splitted[0];
-				monthlyTotalSalesCount.add(totalQuantity);
+				monthlyTotalSalesCount.add(Integer.parseInt(splitted[0]));
 			}
-			List<Integer> totalSalesResult = monthlyTotalSalesCount.stream().map(Integer::parseInt).collect(Collectors.toList());
-			int sumSales = totalSalesResult.stream().mapToInt(Integer::intValue).sum();
+			int sumSales = monthlyTotalSalesCount.stream().mapToInt(Integer::intValue).sum();
+			monthlyTotalSalesCount.clear();
 			if (start.equals(LocalDate.parse(monthEndDates[0]))) {
 				janList.addAll(filteredList);
 			System.out.println("\nTotal sales of the store in January -- " + sumSales);}
@@ -150,10 +145,8 @@ public class Sample {
 
 					String[] splittedList = data.split("[,]");
 					if (splittedList[1].equals(icecreamNames.get(j))) {
-						int quantity = Integer.parseInt(splittedList[0]);
-						int TotalRevenuePerIcecream = Integer.parseInt(splittedList[2]);
-						totalSalesPerMonth.add(quantity);
-						TotalRevenuePerIcecreamPerMonth.add(TotalRevenuePerIcecream);
+						totalSalesPerMonth.add(Integer.parseInt(splittedList[0]));
+						TotalRevenuePerIcecreamPerMonth.add(Integer.parseInt(splittedList[2]));
 					}
 				}
 				int total = totalSalesPerMonth.stream().mapToInt(Integer::intValue).sum();
