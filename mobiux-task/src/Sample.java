@@ -1,4 +1,3 @@
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
@@ -17,8 +16,9 @@ public class Sample {
 	static ArrayList<String> febList = new ArrayList<String>();
 	static ArrayList<String> marList = new ArrayList<String>();
 	static ArrayList<String> icecreamNames = new ArrayList<String>();
-	static List<String> totalSalesPerMonth = new ArrayList<String>();
-	static List<String> TotalRevenuePerIcecreamPerMonth = new ArrayList<String>();
+	static ArrayList<Integer> totalSales = new ArrayList<Integer>();
+	static List<Integer> totalSalesPerMonth = new ArrayList<Integer>();
+	static List<Integer> TotalRevenuePerIcecreamPerMonth = new ArrayList<Integer>();
 	static ArrayList<Integer> soldCount = new ArrayList<Integer>();
 	static ArrayList<String> mostSoldItems = new ArrayList<String>();
 	static ArrayList<Integer> soldPrice = new ArrayList<Integer>();
@@ -30,43 +30,37 @@ public class Sample {
 	static ArrayList<Integer> febSoldPrice = new ArrayList<Integer>();
 	static ArrayList<Integer> marSoldPrice = new ArrayList<Integer>();
 	static List <String> soldListPerMonth = new ArrayList<String>();
+	static String startDate = "2019-01-01";
+	static String endDate = "2019-03-31";
 	static String monthName = null;
 	static String[] monthEndDates = {"2019-01-31", "2019-02-28", "2019-03-31"};
 	public static void main(String[] args) throws FileNotFoundException {
-		Scanner s = new Scanner(new File("C:\\Users\\Admin\\Desktop\\file.txt"));
+		Scanner data = new Scanner(new File("C:\\Users\\Admin\\Desktop\\file.txt"));
 
-		while (s.hasNextLine()) {
-			list.add(s.nextLine());
+		while (data.hasNextLine()) {
+			list.add(data.nextLine());
 		}
-		s.close();
+		data.close();
 
-		ArrayList<String> totalSales = new ArrayList<String>();
-		
 		for (int i = 1, len = list.size(); i < len; i++) {
 			String line = list.get(i);
 
 			String[] splitted = line.split("[,]");
-			String totalQuantity = splitted[3];
+			int totalQuantity = Integer.parseInt(splitted[3]);
 			String IcecreamList = splitted[1];
 			icecreamNames.add(IcecreamList);
 			totalSales.add(totalQuantity);
 		}
-		List<Integer> totalSalesResult = totalSales.stream().map(Integer::parseInt).collect(Collectors.toList());
-		int sumSales = totalSalesResult.stream().mapToInt(Integer::intValue).sum();
+		int sumSales = totalSales.stream().mapToInt(Integer::intValue).sum();
 		Set<String> set = new HashSet<>(icecreamNames);
 		icecreamNames.clear();
 		icecreamNames.addAll(set);
 		System.out.println("Total sales of the store -- " + sumSales);
 		
-		
-		String startDate = "2019-01-01";
-		String endDate = "2019-03-31";
 		LocalDate start = LocalDate.parse(startDate);
 		LocalDate end = LocalDate.parse(endDate);
-		List<LocalDate> totalDates = new ArrayList<>();
 		
 		while (!start.isAfter(end)) {
-			totalDates.add(start);
 			String identifier = start.toString();
 			for (int i = 0, len = list.size(); i < len; i++) {
 				String line = list.get(i);
@@ -115,22 +109,11 @@ public class Sample {
 	
 
 	public static void getMonthTotals(ArrayList<String> filteredList, LocalDate start) {
-		String mnth1 = "2019-01-31";
-		LocalDate monthend1 = LocalDate.parse(mnth1);
-		String mnth2 = "2019-02-28";
-		LocalDate monthend2 = LocalDate.parse(mnth2);
-		String mnth3 = "2019-03-31";
-		LocalDate monthend3 = LocalDate.parse(mnth3);
-		
-		ArrayList<LocalDate> monthend = new ArrayList<LocalDate>();
-		monthend.add(monthend1);
-		monthend.add(monthend2);
-		monthend.add(monthend3);
 		ArrayList<String> monthlyTotalSales = new ArrayList<String>();
 		ArrayList<String> monthlyTotalSalesCount = new ArrayList<String>();
 		for(int monthSales=0;monthSales<3;monthSales++) {
 		
-		if (start.equals(monthend.get(monthSales))) {
+		if (start.equals(LocalDate.parse(monthEndDates[monthSales]))) {
 			monthlyTotalSales.addAll(filteredList);
 			for (int i = 0, length = monthlyTotalSales.size(); i < length; i++) {
 				String line = monthlyTotalSales.get(i);
@@ -141,13 +124,13 @@ public class Sample {
 			}
 			List<Integer> totalSalesResult = monthlyTotalSalesCount.stream().map(Integer::parseInt).collect(Collectors.toList());
 			int sumSales = totalSalesResult.stream().mapToInt(Integer::intValue).sum();
-			if (start.equals(monthend1)) {
+			if (start.equals(LocalDate.parse(monthEndDates[0]))) {
 				janList.addAll(filteredList);
 			System.out.println("\nTotal sales of the store in January -- " + sumSales);}
-			if (start.equals(monthend2)) {
+			if (start.equals(LocalDate.parse(monthEndDates[1]))) {
 				febList.addAll(filteredList);
 				System.out.println("Total sales of the store in February -- " + sumSales);}
-			if (start.equals(monthend3)) {
+			if (start.equals(LocalDate.parse(monthEndDates[2]))) {
 				marList.addAll(filteredList);
 			System.out.println("Total sales of the store in March -- " + sumSales);}
 			filteredList.clear();
@@ -162,23 +145,21 @@ public class Sample {
 			List <String> listClone = new ArrayList<String>();
 			
 			for (int j = 0, length = icecreamNames.size(); j < length; j++) {
-				for (int i = 0, len = filteredList.size(); i < len; i++) {
-					String data = filteredList.get(i);
+				for (int item = 0, len = filteredList.size(); item < len; item++) {
+					String data = filteredList.get(item);
 
 					String[] splittedList = data.split("[,]");
 					if (splittedList[1].equals(icecreamNames.get(j))) {
-						String quantity = splittedList[0];
-						String TotalRevenuePerIcecream = splittedList[2];
+						int quantity = Integer.parseInt(splittedList[0]);
+						int TotalRevenuePerIcecream = Integer.parseInt(splittedList[2]);
 						totalSalesPerMonth.add(quantity);
 						TotalRevenuePerIcecreamPerMonth.add(TotalRevenuePerIcecream);
 					}
 				}
-				List<Integer> listInteger = totalSalesPerMonth.stream().map(Integer::parseInt).collect(Collectors.toList());
-				int total = listInteger.stream().mapToInt(Integer::intValue).sum();
+				int total = totalSalesPerMonth.stream().mapToInt(Integer::intValue).sum();
 				totalSalesPerMonth.clear();
 				
-				List<Integer> MonthRevenuePerIce = TotalRevenuePerIcecreamPerMonth.stream().map(Integer::parseInt).collect(Collectors.toList());
-				int totalRevenue = MonthRevenuePerIce.stream().mapToInt(Integer::intValue).sum();
+				int totalRevenue = TotalRevenuePerIcecreamPerMonth.stream().mapToInt(Integer::intValue).sum();
 				TotalRevenuePerIcecreamPerMonth.clear();
 				mostSoldItems.add(icecreamNames.get(j)+"--"+total);
 				soldCount.add(total);
@@ -186,8 +167,8 @@ public class Sample {
 				soldPrice.add(totalRevenue);
 			}
 			
-			int h = Collections.max(soldCount);
-			String soldIceCount=String.valueOf(h);
+			int numberofSales = Collections.max(soldCount);
+			String soldIceCount=String.valueOf(numberofSales);
 	           for (String string : mostSoldItems) {
 	               if(string.contains(soldIceCount)){
 	                   listClone.add(string);
@@ -208,6 +189,7 @@ public class Sample {
 		        	   marSoldCount.addAll(soldCount);
 		        	   marSoldPrice.addAll(soldPrice);
 		   	        System.out.println("Most Quantity sold item in march -- "+listClone);
+		   	        System.out.println();
 		   	        }
 		           soldCount.clear();
 		           soldPrice.clear();
@@ -261,7 +243,7 @@ public class Sample {
             	   mostRevenue.add(string11);
                }
            }
-        System.out.println("\nMost sold Icecream's Revenue in "+monthName+" -- "+mostRevenue);
+        System.out.println("Most sold Icecream's Revenue in "+monthName+" -- "+mostRevenue);
 	}
 	
 	public static void getSoldItemCalculation(ArrayList<String> filteredList, LocalDate start) {
