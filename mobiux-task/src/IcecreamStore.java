@@ -9,7 +9,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class Sample {
+public class IcecreamStore {
 	static ArrayList<String> list = new ArrayList<String>();
 	static ArrayList<String> filteredList = new ArrayList<String>();
 	static ArrayList<String> janList = new ArrayList<String>();
